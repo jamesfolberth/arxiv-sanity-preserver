@@ -5,6 +5,7 @@ Dumps results to file tfidf.p
 import os
 import pickle
 from random import shuffle, seed
+from pprint import pprint
 
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -66,7 +67,7 @@ v.fit(train_corpus)
 print("transforming %d documents..." % (len(txt_paths), ))
 corpus = make_corpus(txt_paths)
 X = v.transform(corpus)
-print(v.vocabulary_)
+pprint(v.vocabulary_)
 print(X.shape)
 
 # write full matrix out
