@@ -4,29 +4,62 @@ import os
 import re
 import pickle
 import tempfile
+import configparser
 
 # global settings
 # -----------------------------------------------------------------------------
-class Config(object):
-    # main paper information repo file
-    db_path = 'db.p'
-    # intermediate processing folders
-    pdf_dir = os.path.join('data', 'pdf')
-    txt_dir = os.path.join('data', 'txt')
-    thumbs_dir = os.path.join('static', 'thumbs')
-    # intermediate pickles
-    tfidf_path = 'tfidf.p'
-    meta_path = 'tfidf_meta.p'
-    sim_path = 'sim_dict.p'
-    user_sim_path = 'user_sim.p'
-    # sql database file
-    db_serve_path = 'db2.p' # an enriched db.p with various preprocessing info
-    database_path = 'as.db'
-    serve_cache_path = 'serve_cache.p'
+class ConfigFromFile(object):
+    """
+    Read configuration options from a config file
+    (e.g., arxiv-sanity.cfg) using ConfigParser.
+    Populate config variables as members of this class,
+    so you can access with, e.g., Config2().db_path.
     
-    beg_for_hosting_money = 1 # do we beg the active users randomly for money? 0 = no.
-    banned_path = 'banned.txt' # for twitter users who are banned
-    tmp_dir = 'tmp'
+    We also define `Config = Config2()` in this file,
+    so you can just `from utils import Config; Config.db_path`,
+    just like the existing code.
+    """
+    def __init__(self, config_file='arxiv-sanity.cfg'):
+        self.config_file = config_file
+
+        parser = configparser.ConfigParser()
+        parser.read(config_file)
+        self.parser = parser
+
+        self._check_config()
+        self._populate_vars()
+
+    def _check_config(self):
+        if not self.parser.has_section('arxiv-sanity'):
+            raise ValueError("Config file {0} doesn't have section "
+                    "[arxiv-sanity]".format(self.config_file))
+
+    def _populate_vars(self):
+        vars_list = ['data_root',
+                     'db_path',
+                     'pdf_dir',
+                     'txt_dir',
+                     'thumbs_dir',
+                     'tfidf_path',
+                     'meta_path',
+                     'sim_path',
+                     'user_sim_path',
+                     'db_serve_path',
+                     'database_path',
+                     'serve_cache_path',
+                     'beg_for_hosting_money',
+                     'banned_path',
+                     'tmp_dir',
+                     ]
+        
+        parser = self.parser # alias
+        for var in vars_list:
+            val = parser.get('arxiv-sanity', var)
+            setattr(self, var, val)
+# Doing this should work with the old class var Config class
+# without changing the rest of the code
+Config = ConfigFromFile()
+
 
 # Context managers for atomic writes courtesy of
 # http://stackoverflow.com/questions/2333872/atomic-writing-to-file-with-python

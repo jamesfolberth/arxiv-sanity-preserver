@@ -16,7 +16,7 @@ if not shutil.which('convert'): # shutil.which needs Python 3.3+
   sys.exit()
 
 # create if necessary the directories we're using for processing and output
-pdf_dir = os.path.join('data', 'pdf')
+pdf_dir = Config.pdf_dir
 if not os.path.exists(Config.thumbs_dir): os.makedirs(Config.thumbs_dir)
 if not os.path.exists(Config.tmp_dir): os.makedirs(Config.tmp_dir)
 

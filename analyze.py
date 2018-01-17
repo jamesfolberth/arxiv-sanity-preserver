@@ -24,7 +24,7 @@ n = 0
 for pid,j in db.items():
   n += 1
   idvv = '%sv%d' % (j['_rawid'], j['_version'])
-  txt_path = os.path.join('data', 'txt', idvv) + '.pdf.txt'
+  txt_path = os.path.join(Config.txt_dir, idvv) + '.pdf.txt'
   if os.path.isfile(txt_path): # some pdfs dont translate to txt
     with open(txt_path, 'r') as f:
       txt = f.read()
