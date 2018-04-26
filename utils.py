@@ -15,7 +15,7 @@ class ConfigFromFile(object):
     Populate config variables as members of this class,
     so you can access with, e.g., Config2().db_path.
     
-    We also define `Config = Config2()` in this file,
+    We also define `Config = ConfigFromFile()` in this file,
     so you can just `from utils import Config; Config.db_path`,
     just like the existing code.
     """
@@ -50,12 +50,15 @@ class ConfigFromFile(object):
                      'beg_for_hosting_money',
                      'banned_path',
                      'tmp_dir',
+                     'arxiv_query',
+                     'arxiv_query_display_string',
                      ]
         
         parser = self.parser # alias
         for var in vars_list:
             val = parser.get('arxiv-sanity', var)
             setattr(self, var, val)
+
 # Doing this should work with the old class var Config class
 # without changing the rest of the code
 Config = ConfigFromFile()

@@ -29,6 +29,9 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 limiter = Limiter(app, global_limits=["100 per hour", "20 per minute"])
 
+if not os.path.isdir('static/thumbs'):
+    os.symlink(Config.thumbs_dir, 'static/thumbs')
+
 # -----------------------------------------------------------------------------
 # utilities for database interactions 
 # -----------------------------------------------------------------------------
@@ -184,7 +187,7 @@ def encode_json(ps, n=10, send_images=True, send_abstracts=True):
     if send_abstracts:
       struct['abstract'] = p['summary']
     if send_images:
-      struct['img'] = '/static/thumbs/' + idvv + '.pdf.jpg'
+      struct['img'] = os.path.join('static/thumbs', idvv + '.pdf.jpg')
     struct['tags'] = [t['term'] for t in p['tags']]
     
     # render time information nicely
@@ -226,7 +229,14 @@ def default_context(papers, **kws):
   except Exception as e:
     print(e)
 
-  ans = dict(papers=top_papers, numresults=len(papers), totpapers=len(db), tweets=[], msg='', show_prompt=show_prompt, pid_to_users={})
+  ans = dict(papers=top_papers,
+             numresults=len(papers),
+             totpapers=len(db),
+             arxiv_query_display_string=Config.arxiv_query_display_string,
+             tweets=[],
+             msg='',
+             show_prompt=show_prompt,
+             pid_to_users={})
   ans.update(kws)
   return ans
 
@@ -520,7 +530,9 @@ def friends():
 
 @app.route('/account')
 def account():
-    ctx = { 'totpapers':len(db) }
+    ctx = {'totpapers':len(db),
+           'arxiv_query_display_string': Config.arxiv_query_display_string,
+           }
 
     followers = []
     following = []

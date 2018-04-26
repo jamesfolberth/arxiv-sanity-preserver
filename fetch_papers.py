@@ -49,7 +49,7 @@ if __name__ == "__main__":
   parser = argparse.ArgumentParser()
   parser.add_argument('--search-query', type=str,
                       #default='cat:cs.CV+OR+cat:cs.AI+OR+cat:cs.LG+OR+cat:cs.CL+OR+cat:cs.NE+OR+cat:stat.ML',
-                      default='cat:eess.SP',
+                      default=Config.arxiv_query,
                       help='query used for arxiv API. See http://arxiv.org/help/api/user-manual#detailed_examples')
   parser.add_argument('--start-index', type=int, default=0, help='0 = most recent API result')
   parser.add_argument('--max-index', type=int, default=10, help='upper bound on paper index we will fetch')
